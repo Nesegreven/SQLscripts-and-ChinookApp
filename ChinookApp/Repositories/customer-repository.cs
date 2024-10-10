@@ -196,7 +196,7 @@ namespace ChinookApp.Repositories
                     {
                         customerCountries.Add(new CustomerCountry
                         {
-                            Country = reader.GetString(0),  
+                            Country = reader.GetString(0),
                             CustomerCount = reader.GetInt32(1)
                         });
                     }
