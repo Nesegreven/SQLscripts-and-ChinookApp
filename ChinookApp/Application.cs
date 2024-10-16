@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChinookApp.Models;
-using SQL_ConscoleApp.Repositories;
+using ChinookApp.Repositories;
 
 namespace ChinookApp
 {
