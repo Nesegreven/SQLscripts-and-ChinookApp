@@ -276,7 +276,7 @@ namespace ChinookApp
                         customer.LastName = input;
                         isUpdated = true;
                     }
-                    //should perhaps update consider email validation, same as for when adding a customer
+                    //should perhaps consider email validation, same as for when adding a customer
                     Console.Write($"New Email ({customer.Email}): ");
                     input = Console.ReadLine()?.Trim();
                     if (!string.IsNullOrWhiteSpace(input))
