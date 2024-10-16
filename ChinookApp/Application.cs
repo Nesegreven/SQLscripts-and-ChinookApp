@@ -216,7 +216,7 @@ namespace ChinookApp
                 {
                     Console.WriteLine("Email is required. Please enter a valid email address.");
                 }
-                // Note: You might want to add email format validation here
+                // Note to self: You might want to add email format validation here
             }
 
             Console.Write("Country (optional): ");
@@ -242,6 +242,7 @@ namespace ChinookApp
             }
         }
 
+        //todo: update to use the same appriach as when adding a new customer regarding data of optional fields
         /// <summary>
         /// Updates an existing customer in the database.
         /// This method:
@@ -275,7 +276,7 @@ namespace ChinookApp
                         customer.LastName = input;
                         isUpdated = true;
                     }
-
+                    //should perhaps update consider email validation, same as for when adding a customer
                     Console.Write($"New Email ({customer.Email}): ");
                     input = Console.ReadLine()?.Trim();
                     if (!string.IsNullOrWhiteSpace(input))
