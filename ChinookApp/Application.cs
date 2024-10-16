@@ -180,7 +180,7 @@ namespace ChinookApp
         /// This method:
         /// 1. Prompts the user to enter customer details.
         /// 2. Validates the input to ensure required fields are not null or empty.
-        /// 3. Handles optional fields consistently, setting them to null if input is empty.
+        /// 3. Handles optional fields, setting them to null if input is empty.
         /// 4. Creates a new Customer object with the entered data.
         /// 5. Adds the new customer to the database and displays the new customer's ID.
         /// </summary>
