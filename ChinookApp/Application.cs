@@ -401,6 +401,7 @@ namespace ChinookApp
             }
         }
 
+        //right now the implementation allows the user to select a page size, probably should hardcode something like 10 entries per page.
         /// <summary>
         /// Retrieves and displays a page of customers from the database.
         /// This method:
