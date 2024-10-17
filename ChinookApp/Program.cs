@@ -35,6 +35,9 @@ namespace ChinookApp
             // Create Application instance
             var application = new Application(customerRepository);
 
+            // Set the console window width
+            Console.WindowWidth = 130;
+
             // Run the main application loop
             application.Run();
         }
