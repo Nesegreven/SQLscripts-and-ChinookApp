@@ -381,6 +381,7 @@ namespace ChinookApp
         /// 1. Prompts the user to enter a customer ID.
         /// 2. Retrieves the most popular genre(s) for the specified customer.
         /// 3. Displays the customer's name, the most popular genre(s), and the number of purchases in that genre.
+        /// 4. Maintains consistent tabular format regardless of number of genres.
         /// </summary>
         private void MostPopularGenreForCustomer()
         {
@@ -388,11 +389,35 @@ namespace ChinookApp
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 var popularGenres = _customerRepository.GetMostPopularGenreForCustomer(id);
-                foreach (var genre in popularGenres)
+
+                if (popularGenres.Any())
                 {
-                    Console.WriteLine($"Customer: {genre.CustomerName}");
-                    Console.WriteLine($"Most popular genre: {genre.GenreName}");
-                    Console.WriteLine($"Purchases in this genre: {genre.PurchaseCount}");
+                    // Print customer name
+                    Console.WriteLine($"\nCustomer: {popularGenres.First().CustomerName}");
+
+                    // Print header based on number of genres
+                    if (popularGenres.Count == 1)
+                    {
+                        Console.WriteLine("Most popular genre:");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Most popular genres (Tie between {popularGenres.Count} genres):");
+                    }
+
+                    // Print table header and data - same format regardless of number of genres
+                    Console.WriteLine($"{"Genre Name",-15}| {"Purchase Count",14}");
+                    Console.WriteLine(new string('-', 35));  // Separator line
+
+                    // Print each genre with consistent formatting
+                    foreach (var genre in popularGenres)
+                    {
+                        Console.WriteLine($"{genre.GenreName,-15}| {genre.PurchaseCount,8}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No purchase history found for this customer.");
                 }
             }
             else
