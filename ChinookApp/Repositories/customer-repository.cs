@@ -239,10 +239,9 @@ namespace ChinookApp.Repositories
 
         /// <summary>
         /// Retrieves the most popular genre(s) for a specific customer.
-        /// This method accounts for ties, returning all genres that share the highest purchase count.
         /// </summary>
         /// <param name="customerId">The ID of the customer to analyze.</param>
-        /// <returns>A list of CustomerGenre objects representing the customer's most popular genre(s), including ties.</returns>
+        /// <returns>A list of CustomerGenre objects representing the customer's most popular genre(s).</returns>
         public List<CustomerGenre> GetMostPopularGenreForCustomer(int customerId)
         {
             var customerGenres = new List<CustomerGenre>();
@@ -250,26 +249,29 @@ namespace ChinookApp.Repositories
             {
                 connection.Open();
                 var command = new SqlCommand(@"
-            WITH CustomerGenreCounts AS (
-                SELECT 
-                    c.CustomerId,
-                    c.FirstName + ' ' + c.LastName AS CustomerName,
-                    g.Name AS GenreName,
-                    COUNT(*) AS PurchaseCount,
-                    DENSE_RANK() OVER (PARTITION BY c.CustomerId ORDER BY COUNT(*) DESC) AS Rank
-                FROM Customer c
-                JOIN Invoice i ON c.CustomerId = i.CustomerId
-                JOIN InvoiceLine il ON i.InvoiceId = il.InvoiceId
-                JOIN Track t ON il.TrackId = t.TrackId
-                JOIN Genre g ON t.GenreId = g.GenreId
-                WHERE c.CustomerId = @CustomerId
-                GROUP BY c.CustomerId, c.FirstName, c.LastName, g.Name
-            )
-            SELECT CustomerId, CustomerName, GenreName, PurchaseCount
-            FROM CustomerGenreCounts
-            WHERE Rank = 1
-            ORDER BY GenreName", connection);
-
+                    WITH CustomerGenreCounts AS (
+                        SELECT 
+                            c.CustomerId,
+                            c.FirstName + ' ' + c.LastName AS CustomerName,
+                            g.Name AS GenreName,
+                            COUNT(*) AS PurchaseCount,
+                            ROW_NUMBER() OVER (PARTITION BY c.CustomerId ORDER BY COUNT(*) DESC) AS Rank
+                        FROM Customer c
+                        JOIN Invoice i ON c.CustomerId = i.CustomerId
+                        JOIN InvoiceLine il ON i.InvoiceId = il.InvoiceId
+                        JOIN Track t ON il.TrackId = t.TrackId
+                        JOIN Genre g ON t.GenreId = g.GenreId
+                        WHERE c.CustomerId = @CustomerId
+                        GROUP BY c.CustomerId, c.FirstName, c.LastName, g.Name
+                    )
+                    SELECT CustomerId, CustomerName, GenreName, PurchaseCount
+                    FROM CustomerGenreCounts
+                    WHERE Rank = 1", connection);
+                // This query identifies the most frequently purchased music genre for a specific customer.
+                // It does this by:
+                // 1. Calculating the number of purchases for each genre by the customer.
+                // 2. Ranking these genres based on the purchase count, with the highest count receiving the top rank.
+                // 3. Selecting the genre with the highest purchase count for the customer.
                 command.Parameters.AddWithValue("@CustomerId", customerId);
                 using (var reader = command.ExecuteReader())
                 {
