@@ -378,21 +378,41 @@ namespace ChinookApp
         /// <summary>
         /// Displays the most popular genre(s) for a specific customer.
         /// This method:
-        /// 1. Prompts the user to enter a customer ID.
-        /// 2. Retrieves the most popular genre(s) for the specified customer.
-        /// 3. Displays the customer's name, the most popular genre(s), and the number of purchases in that genre.
+        /// 1. Prompts for a customer ID
+        /// 2. Retrieves and displays the customer's most popular genre(s)
+        /// 3. Handles cases where multiple genres have the same purchase count
         /// </summary>
-        private void MostPopularGenreForCustomer()
+        /// <param name="repository">The customer repository used to retrieve customer data</param>
+        static void MostPopularGenreForCustomer(ICustomerRepository repository)
         {
             Console.Write("Enter customer ID: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                var popularGenres = _customerRepository.GetMostPopularGenreForCustomer(id);
-                foreach (var genre in popularGenres)
+                var popularGenres = repository.GetMostPopularGenreForCustomer(id);
+
+                if (popularGenres.Any())
                 {
-                    Console.WriteLine($"Customer: {genre.CustomerName}");
-                    Console.WriteLine($"Most popular genre: {genre.GenreName}");
-                    Console.WriteLine($"Purchases in this genre: {genre.PurchaseCount}");
+                    var customerName = popularGenres.First().CustomerName;
+                    var purchaseCount = popularGenres.First().PurchaseCount;
+
+                    Console.WriteLine($"\nCustomer: {customerName}");
+                    if (popularGenres.Count > 1)
+                    {
+                        Console.WriteLine($"Most popular genres (tied with {purchaseCount} purchases each):");
+                        foreach (var genre in popularGenres)
+                        {
+                            Console.WriteLine($"- {genre.GenreName}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Most popular genre: {popularGenres.First().GenreName}");
+                        Console.WriteLine($"Purchases in this genre: {purchaseCount}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No purchase history found for this customer.");
                 }
             }
             else
